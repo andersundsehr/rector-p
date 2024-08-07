@@ -17,7 +17,6 @@ you will get asked for each file that has changes if you want to apply them.
 [![asciicast](https://asciinema.org/a/671145.png)](https://asciinema.org/a/671145)
 
 
-
 # with ♥️ from anders und sehr GmbH
 
 > If something did not work 😮  
