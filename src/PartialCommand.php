@@ -220,13 +220,13 @@ final class PartialCommand extends Command
     private function dryRunRector(string $file): bool
     {
         $this->output->writeln('<fg=white;bg=blue>Checking file ' . $file . ' ...</>');
-        $exitCode = $this->runCommand("rector process --ansi --no-progress-bar --dry-run " . $file);
+        $exitCode = $this->runCommand($this->getBinPath() . "rector process --ansi --no-progress-bar --dry-run " . $file);
         return $exitCode === 0;
     }
 
     private function executeRector(string $file): void
     {
-        $exitCode = $this->runCommand("rector process --ansi --no-progress-bar --no-diffs " . $file);
+        $exitCode = $this->runCommand($this->getBinPath() . "rector process --ansi --no-progress-bar --no-diffs " . $file);
         if ($exitCode) {
             exit($exitCode);
         }
@@ -242,5 +242,14 @@ final class PartialCommand extends Command
         $duration = microtime(true) - $startTime;
         $this->output->writeln('<fg=gray>duration: ' . round($duration, 3) . 's</>', OutputInterface::VERBOSITY_DEBUG);
         return $exitCode;
+    }
+
+    private function getBinPath(): string
+    {
+        if (isset($GLOBALS['_composer_bin_dir'])) {
+            return $GLOBALS['_composer_bin_dir'] . '/';
+        }
+
+        return '';
     }
 }
