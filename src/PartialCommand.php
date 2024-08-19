@@ -250,6 +250,10 @@ final class PartialCommand extends Command
             return $GLOBALS['_composer_bin_dir'] . '/';
         }
 
+        if (file_exists('vendor/bin/rector')) {
+            return 'vendor/bin/';
+        }
+
         return '';
     }
 }
