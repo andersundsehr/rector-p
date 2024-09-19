@@ -20,6 +20,7 @@ use Rector\StaticReflection\DynamicSourceLocatorDecorator;
 use Rector\ValueObject\Configuration;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,6 +42,7 @@ final class PartialCommand extends Command
 
     protected function configure(): void
     {
+        $this->addArgument(Option::SOURCE, InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Files or directories to be upgraded.');
         $this->addOption(
             'startOver',
             's',
@@ -61,7 +63,7 @@ final class PartialCommand extends Command
             $this->cache->clear();
         }
 
-        $allFiles = $this->getAllFiles();
+        $allFiles = $this->getAllFiles($this->input->getArgument(Option::SOURCE));
 
         $chunkConfig = $this->parseChunkConfig($input->getOption('chunk'));
         if ($chunkConfig->chunkNumber === 1) {
@@ -96,9 +98,10 @@ final class PartialCommand extends Command
     }
 
     /**
+     * @param list<string> $sources
      * @return list<string>
      */
-    private function getAllFiles(): array
+    private function getAllFiles(array $sources): array
     {
         $bootstrapConfigs = (new RectorConfigsResolver())->provide();
 
@@ -107,9 +110,13 @@ final class PartialCommand extends Command
             $configFunction(new RectorConfig());
         }
 
-        $paths = SimpleParameterProvider::provideArrayParameter(Option::PATHS);
-        if (!$paths) {
-            throw new InvalidArgumentException('No paths found in configuration ' . $bootstrapConfigs->getMainConfigFile());
+        if ($sources) {
+            $paths = $sources;
+        } else {
+            $paths = SimpleParameterProvider::provideArrayParameter(Option::PATHS);
+            if (!$paths) {
+                throw new InvalidArgumentException('No paths found in configuration ' . $bootstrapConfigs->getMainConfigFile());
+            }
         }
 
         $rectorContainer = (new RectorContainerFactory())->createFromBootstrapConfigs($bootstrapConfigs);
