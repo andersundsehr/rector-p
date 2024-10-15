@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace Andersundsehr\RectorP;
 
+use function array_filter;
+use function hash_file;
+
 final class Cache
 {
     public function setProcessed(string $fileName): void
     {
         $data = $this->getData();
-        $data[$fileName] = true;
+        $data[$fileName] = hash_file('sha256', $fileName);
         file_put_contents($this->getCacheFilePath(), json_encode($data, flags: JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     public function isProcessed(string $fileName): bool
     {
-        $data = $this->getData();
-        return $data[$fileName] ?? false;
+        $hash = $this->getData()[$fileName] ?? '';
+        return $hash === hash_file('sha256', $fileName);
     }
 
     public function clear(): void
@@ -30,7 +33,7 @@ final class Cache
     }
 
     /**
-     * @return array<string, true>
+     * @return array<string, string>
      */
     private function getData(): array
     {
@@ -42,6 +45,6 @@ final class Cache
         assert(is_string($contents));
         $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
         assert(is_array($data));
-        return $data;
+        return array_filter($data, is_string(...));
     }
 }
