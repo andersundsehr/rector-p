@@ -84,6 +84,8 @@ final class PartialCommand extends Command
             $this->output->writeln('All chunks done');
         } else {
             $verbosity = match ($output->getVerbosity()) {
+                // can remove defined check if Symfony 7.2 is lowest supported version:
+                defined(OutputInterface::class . '::VERBOSITY_SILENT') ? OutputInterface::VERBOSITY_SILENT : 8 => '--silent',
                 OutputInterface::VERBOSITY_QUIET => '-q',
                 OutputInterface::VERBOSITY_NORMAL => '',
                 OutputInterface::VERBOSITY_VERBOSE => ' -v',
