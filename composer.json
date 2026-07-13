@@ -19,7 +19,6 @@
     "symfony/console": "^5.4 || ^6.4 || ^7.4"
   },
   "require-dev": {
-    "andersundsehr/grumphp-fractor-task": "@dev",
     "andersundsehr/phpstan-git-files": "@dev",
     "pluswerk/grumphp-bom-task": "@dev",
     "pluswerk/grumphp-config": "@dev",
@@ -53,7 +52,6 @@
   ],
   "config": {
     "allow-plugins": {
-      "a9f/fractor-extension-installer": true,
       "ergebnis/composer-normalize": true,
       "phpro/grumphp": true,
       "phpstan/extension-installer": true,
@@ -62,7 +60,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-main": "11.0-dev"
+      "dev-main": "10.0-dev"
     }
   },
   "scripts": {
